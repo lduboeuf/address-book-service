@@ -1542,10 +1542,20 @@ GHashTable *QIndividual::parseNoteDetails(GHashTable *details,
         return details;
     }
 
-    GValue *value;
-    PERSONA_DETAILS_INSERT_STRING_FIELD_DETAILS(details, cDetails,
-                                                FOLKS_PERSONA_DETAIL_NOTES, value, QContactNote,
-                                                FOLKS_TYPE_NOTE_FIELD_DETAILS, note, prefDetail);
+    //    GValue *value;
+    //    PERSONA_DETAILS_INSERT_STRING_FIELD_DETAILS(details, cDetails,
+    //                                                FOLKS_PERSONA_DETAIL_NOTES, value, QContactNote,
+    //                                                FOLKS_TYPE_NOTE_FIELD_DETAILS, note, prefDetail);
+
+    Q_FOREACH(const QContactDetail& detail, cDetails) {
+        QContactNote note = static_cast<QContactNote>(detail);
+        if(!note.isEmpty()) {
+            GValue *value = GeeUtils::gValueSliceNew(G_TYPE_STRING);
+            g_value_set_string(value, note.note().toUtf8().data());
+            GeeUtils::personaDetailsInsert(details, FOLKS_PERSONA_DETAIL_NOTES, value);
+        }
+    }
+
 
     return details;
 }
