@@ -170,6 +170,8 @@ QIndividual::QIndividual(FolksIndividual *individual, FolksIndividualAggregator 
 }
 
 
+
+
 void QIndividual::notifyUpdate()
 {
     for(int i=0; i < m_listeners.size(); i++) {
