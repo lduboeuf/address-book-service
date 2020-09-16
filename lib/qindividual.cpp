@@ -241,6 +241,7 @@ void QIndividual::appendDetailsForPersona(QtContacts::QContact *contact,
                                           bool readOnly) const
 {
     if (!detail.isEmpty()) {
+        //qDebug() << "appendDetailsForPersona detail: " << detail.value(QContactDetail::TypeNote);
         QtContacts::QContactDetail cpy(detail);
         QtContacts::QContactDetail::AccessConstraints access;
         if (readOnly ||
@@ -755,10 +756,10 @@ QtContacts::QContactDetail QIndividual::getPersonaFavorite(FolksPersona *persona
 
 QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, int index) const
 {
-    if (!FOLKS_IS_NOTE_FIELD_DETAILS(persona)) {
+    if (!FOLKS_IS_NOTE_DETAILS(persona)) {
         return QtContacts::QContactDetail();
     }
-
+     qDebug() << "getPersonaNote i'm a note detail:";
     GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_DETAILS(persona));
     if (!notes) {
         return QContactDetail();
@@ -770,9 +771,10 @@ QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, in
     while(gee_iterator_next(iter)) {
         FolksAbstractFieldDetails *fd = FOLKS_ABSTRACT_FIELD_DETAILS(gee_iterator_get(iter));
         const gchar *note = (const gchar*) folks_abstract_field_details_get_value(fd);
-
+        qDebug() << "note:" << note;
         s_note = s_note + QString::fromUtf8(note) + "\n";
     }
+    qDebug() << "s_note:" << s_note;
 
     QContactNote detail;
     detail.setNote(s_note);
@@ -1578,10 +1580,21 @@ GHashTable *QIndividual::parseNoteDetails(GHashTable *details,
         return details;
     }
 
-    GValue *value;
-    PERSONA_DETAILS_INSERT_STRING_FIELD_DETAILS(details, cDetails,
-                                                FOLKS_PERSONA_DETAIL_NOTES, value, QContactNote,
-                                                FOLKS_TYPE_NOTE_FIELD_DETAILS, note, prefDetail);
+        GValue *value;
+        PERSONA_DETAILS_INSERT_STRING_FIELD_DETAILS(details, cDetails,
+                                                    FOLKS_PERSONA_DETAIL_NOTES, value, QContactNote,
+                                                    FOLKS_TYPE_NOTE_FIELD_DETAILS, note, prefDetail);
+
+    Q_FOREACH(const QContactDetail& detail, cDetails) {
+        QContactNote note = static_cast<QContactNote>(detail);
+        if(!note.isEmpty()) {
+            qDebug() << "ok i'm not empty:" <<  note.note().toUtf8().data();
+            GValue *value = GeeUtils::gValueSliceNew(G_TYPE_STRING);
+            g_value_set_string(value, note.note().toUtf8().data());
+            GeeUtils::personaDetailsInsert(details, FOLKS_PERSONA_DETAIL_NOTES, value);
+        }
+    }
+
 
     return details;
 }
