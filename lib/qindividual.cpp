@@ -993,6 +993,9 @@ void QIndividual::updateContact(QContact *contact) const
             appendDetailsForPersona(contact,
                                     getPersonaFavorite(persona, personaIndex),
                                     !wPropList.contains("is-favourite"));
+            appendDetailsForPersona(contact,
+                                    getPersonaNote(persona, personaIndex),
+                                    !wPropList.contains("notes"));
         }
 
         QList<QContactDetail> details;
