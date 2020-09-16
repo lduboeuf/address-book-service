@@ -761,7 +761,7 @@ QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, in
 
     GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_FIELD_DETAILS(persona));
     if (!notes) {
-        return details;
+        return QContactDetail();
     }
     GeeIterator *iter = gee_iterable_iterator(GEE_ITERABLE(notes));
 
