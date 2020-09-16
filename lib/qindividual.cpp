@@ -169,9 +169,6 @@ QIndividual::QIndividual(FolksIndividual *individual, FolksIndividualAggregator 
     setIndividual(individual);
 }
 
-
-
-
 void QIndividual::notifyUpdate()
 {
     for(int i=0; i < m_listeners.size(); i++) {
@@ -756,6 +753,35 @@ QtContacts::QContactDetail QIndividual::getPersonaFavorite(FolksPersona *persona
     return detail;
 }
 
+QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, int index) const
+{
+    if (!FOLKS_IS_NOTE_FIELD_DETAILS(persona)) {
+        return QtContacts::QContactDetail();
+    }
+
+    GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_FIELD_DETAILS(persona));
+    if (!notes) {
+        return details;
+    }
+    GeeIterator *iter = gee_iterable_iterator(GEE_ITERABLE(notes));
+
+    QString note;
+
+    while(gee_iterator_next(iter)) {
+        FolksAbstractFieldDetails *fd = FOLKS_ABSTRACT_FIELD_DETAILS(gee_iterator_get(iter));
+        const gchar *note = (const gchar*) folks_abstract_field_details_get_value(fd);
+
+        note << qStringFromGChar(note);
+    }
+
+    QContactNote detail;
+    detail.setNote(note);
+    detail.setDetailUri(detail.setDetailUri(QString("%1.1").arg(index)));
+    return detail;
+
+
+}
+
 QList<QContactDetail> QIndividual::getPersonaExtendedDetails(FolksPersona *persona, int index) const
 {
     QList<QContactDetail> result;
@@ -824,6 +850,10 @@ QtContacts::QContact QIndividual::copy(const QContact &c, QList<QContactDetail::
 
         if (fields.contains(QContactDetail::TypeBirthday)) {
             details << c.detail<QContactBirthday>();
+        }
+
+        if (fields.contains(QContactDetail::TypeNote)) {
+            details << c.detail<QContactNote>();
         }
 
         if (fields.contains(QContactDetail::TypeAvatar)) {
@@ -1545,20 +1575,10 @@ GHashTable *QIndividual::parseNoteDetails(GHashTable *details,
         return details;
     }
 
-    //    GValue *value;
-    //    PERSONA_DETAILS_INSERT_STRING_FIELD_DETAILS(details, cDetails,
-    //                                                FOLKS_PERSONA_DETAIL_NOTES, value, QContactNote,
-    //                                                FOLKS_TYPE_NOTE_FIELD_DETAILS, note, prefDetail);
-
-    Q_FOREACH(const QContactDetail& detail, cDetails) {
-        QContactNote note = static_cast<QContactNote>(detail);
-        if(!note.isEmpty()) {
-            GValue *value = GeeUtils::gValueSliceNew(G_TYPE_STRING);
-            g_value_set_string(value, note.note().toUtf8().data());
-            GeeUtils::personaDetailsInsert(details, FOLKS_PERSONA_DETAIL_NOTES, value);
-        }
-    }
-
+    GValue *value;
+    PERSONA_DETAILS_INSERT_STRING_FIELD_DETAILS(details, cDetails,
+                                                FOLKS_PERSONA_DETAIL_NOTES, value, QContactNote,
+                                                FOLKS_TYPE_NOTE_FIELD_DETAILS, note, prefDetail);
 
     return details;
 }

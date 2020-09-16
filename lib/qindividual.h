@@ -121,6 +121,7 @@ private:
     QtContacts::QContactDetail getPersonaBirthday       (FolksPersona *persona, int index) const;
     QtContacts::QContactDetail getPersonaPhoto          (FolksPersona *persona, int index) const;
     QtContacts::QContactDetail getPersonaFavorite       (FolksPersona *persona, int index) const;
+    QtContacts::QContactDetail getPersonaNote(FolksPersona *persona, int index) const;
 
     QList<QtContacts::QContactDetail> getPersonaExtendedDetails (FolksPersona *persona, int index) const;
     QList<QtContacts::QContactDetail> getPersonaRoles   (FolksPersona *persona,
