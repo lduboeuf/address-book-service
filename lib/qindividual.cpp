@@ -776,7 +776,7 @@ QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, in
 
     QContactNote detail;
     detail.setNote(note);
-    detail.setDetailUri(detail.setDetailUri(QString("%1.1").arg(index)));
+    detail.setDetailUri(QString("%1.1").arg(index));
     return detail;
 
 
