@@ -759,7 +759,7 @@ QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, in
         return QtContacts::QContactDetail();
     }
 
-    GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_FIELD_DETAILS(persona));
+    GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_DETAILS(persona));
     if (!notes) {
         return QContactDetail();
     }
