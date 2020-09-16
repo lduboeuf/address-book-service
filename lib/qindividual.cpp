@@ -771,7 +771,7 @@ QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, in
         FolksAbstractFieldDetails *fd = FOLKS_ABSTRACT_FIELD_DETAILS(gee_iterator_get(iter));
         const gchar *note = (const gchar*) folks_abstract_field_details_get_value(fd);
 
-        note + qStringFromGChar(note) + "\n";
+        note = note + qStringFromGChar(note) + "\n";
     }
 
     QContactNote detail;
