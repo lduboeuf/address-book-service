@@ -765,17 +765,17 @@ QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, in
     }
     GeeIterator *iter = gee_iterable_iterator(GEE_ITERABLE(notes));
 
-    QString note;
+    QString s_note;
 
     while(gee_iterator_next(iter)) {
         FolksAbstractFieldDetails *fd = FOLKS_ABSTRACT_FIELD_DETAILS(gee_iterator_get(iter));
         const gchar *note = (const gchar*) folks_abstract_field_details_get_value(fd);
 
-        note = note + qStringFromGChar(note) + "\n";
+        s_note = s_note + QString::fromUtf8(note) + "\n";
     }
 
     QContactNote detail;
-    detail.setNote(note);
+    detail.setNote(s_note);
     detail.setDetailUri(QString("%1.1").arg(index));
     return detail;
 
