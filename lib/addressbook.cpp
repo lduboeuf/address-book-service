@@ -1371,6 +1371,8 @@ void AddressBook::updateContactsDone(const QString &contactId,
     if (!m_updateCommandPendingContacts.isEmpty()) {
         QString vCard = m_updateCommandPendingContacts.takeFirst();
         QContact newContact = VCardParser::vcardToContact(vCard);
+
+        qDebug() << "updateContactsDone VCardParser::vcardToContact: " << vCard; << " newContact:" << newContact.detail(QtContacts::QContactDetail::TypeNote);
         ContactEntry *entry = m_contacts->value(newContact.detail<QContactGuid>().guid());
         if (entry) {
             entry->individual()->update(newContact, this,

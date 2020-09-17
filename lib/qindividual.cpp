@@ -756,10 +756,10 @@ QtContacts::QContactDetail QIndividual::getPersonaFavorite(FolksPersona *persona
 
 QtContacts::QContactDetail QIndividual::getPersonaNote(FolksPersona *persona, int index) const
 {
+    qDebug() << "getPersonaNote";
     if (!FOLKS_IS_NOTE_DETAILS(persona)) {
         return QtContacts::QContactDetail();
     }
-     qDebug() << "getPersonaNote i'm a note detail:";
     GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_DETAILS(persona));
     if (!notes) {
         return QContactDetail();
@@ -920,6 +920,7 @@ QtContacts::QContact &QIndividual::contact()
         // avoid change on m_contact pointer until the contact is fully loaded
         QContact contact;
         contact.setId(QContactId("qtcontacts:galera:", m_id.toUtf8()));
+        qDebug() << "contact() id: " << contact.id();
         updateContact(&contact);
         m_contact = new QContact(contact);
     }
@@ -949,6 +950,7 @@ void QIndividual::updatePersonas()
 
 void QIndividual::updateContact(QContact *contact) const
 {
+    qDebug() << "updateContact()";
     if (!m_individual) {
         return;
     }
@@ -974,6 +976,7 @@ void QIndividual::updateContact(QContact *contact) const
 
         // vcard only support one of these details by contact
         if (personaIndex == 1) {
+            qDebug() << "updateContact() personaIndex == 1";
             appendDetailsForPersona(contact,
                                     getTimeStamp(persona, personaIndex),
                                     true);
@@ -1116,7 +1119,9 @@ bool QIndividual::update(const QtContacts::QContact &newContact, QObject *object
 
 bool QIndividual::update(const QString &vcard, QObject *object, const char *slot)
 {
+    qDebug() << "QIndividual::update " << vcard;
     QContact contact = VCardParser::vcardToContact(vcard);
+    qDebug() << "QIndividual::update contact:" << contact.detail(QtContacts::QContactDetail::TypeNote);
     return update(contact, object, slot);
 }
 
